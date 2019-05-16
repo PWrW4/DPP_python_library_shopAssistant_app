@@ -3,32 +3,63 @@ import copy
 from shopAssistant import advice
 from shopAssistant import mealsTypes
 from shopAssistant.yamlOperations import fileOperations
+import random
+
+
+def print_advice(adv):
+    print()
+    print(adv.name)
+    print(adv.ingredients)
+    print(adv.mealType.name)
+    print()
+
+
+def load_advices():
+    adv_l = fileOperations.open_yaml("adviceList.yml")
+    return adv_l
+
+
+def save_advice(adv_l):
+    fileOperations.save_yaml(adv_l, "adviceList.yml")
+
+
+def chose_by_type(adv_l):
+    print()
+    i = 1
+    for m in mealsTypes.MealType:
+        print(i, " ", m.name)
+        i += 1
+    print()
+    new_arr = []
+    i = int(input("Chose type\n"))
+    for a in adv_l:
+        if a.mealType.value == i:
+            new_arr.append(a)
+    if len(new_arr) > 0:
+        print_advice(random.choice(new_arr))
+    else:
+        print("new_arr null")
 
 
 def main():
     adviceList = []
-    adv = advice.Advice()
-    adv.name = "all"
-    adv.ingredients = ["ing1", "ing2"]
-    adv.mealType = mealsTypes.MealType.All
-    adv2 = advice.Advice()
-    adv2.name = "dinner"
-    adv2.ingredients = ["ing4", "ing9"]
-    adv2.mealType = mealsTypes.MealType.Dinner
-    adv3 = advice.Advice()
-    adv3.name = "lunch"
-    adv3.ingredients = ["ing3", "ing7"]
-    adv3.mealType = mealsTypes.MealType.Lunch
-    adv4 = advice.Advice()
-    adv4.name = "breakfast"
-    adv4.ingredients = ["ing5", "ing8"]
-    adv4.mealType = mealsTypes.MealType.Breakfast
-    adviceList.append(adv)
-    adviceList.append(adv2)
-    adviceList.append(adv3)
-    adviceList.append(adv4)
-    print(adviceList)
-    fileOperations.save_yaml(adviceList, "test.yml")
+
+    choseInt = 1
+
+    while choseInt != "q" and choseInt != "0":
+        print("1. Load\n2. Save\n3. Print All\n4. Chose something to eat!\n5. Chose type and get me meal")
+        choseInt = input()
+        if choseInt == "1":
+            adviceList = load_advices()
+        if choseInt == "2" and len(adviceList) > 0:
+            save_advice(adviceList)
+        if choseInt == "3" and len(adviceList) > 0:
+            for a in adviceList:
+                print_advice(a)
+        if choseInt == "4" and len(adviceList) > 0:
+            print_advice(random.choice(adviceList))
+        if choseInt == "5" and len(adviceList) > 0:
+            chose_by_type(adviceList)
 
 
 main()
